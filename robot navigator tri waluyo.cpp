@@ -135,10 +135,9 @@ int main() {
     }
     
     char dummy[10]; 
-    scanf("%s", dummy); // mechanic
-    scanf("%s", dummy); // electrical
+    scanf("%s", dummy);
+    scanf("%s", dummy);
     
-    // Baca jam awal
     int start_hour; 
     scanf("%d", &start_hour);
 
@@ -257,4 +256,5 @@ int main() {
     
     return 0;
 }
+
 
