@@ -98,7 +98,6 @@ int main() {
     int N, M;
     scanf("%d %d", &N, &M);
     
-    // Baca edges
     for (int i = 0; i < M; ++i) {
         char u_str[10], v_str[10]; 
         int w, o;
@@ -256,5 +255,6 @@ int main() {
     
     return 0;
 }
+
 
 
