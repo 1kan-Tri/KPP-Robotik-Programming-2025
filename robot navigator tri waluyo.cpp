@@ -106,13 +106,13 @@ int main() {
         add_edge(get_node_idx(u_str), get_node_idx(v_str), w, o);
     }
     
-    // Baca start dan target
+
     char s_str[10], t_str[10];
     scanf("%s %s", s_str, t_str);
     int start_node = get_node_idx(s_str);
     int target_node = get_node_idx(t_str);
     
-    // Baca rest points
+
     char rest_str[256];
     scanf(" %[^\n]", rest_str);
     if (strcmp(rest_str, "-") != 0) {
@@ -123,7 +123,7 @@ int main() {
         }
     }
     
-    // Baca charging stations
+
     char charge_str[256];
     scanf(" %[^\n]", charge_str);
     if (strcmp(charge_str, "-") != 0) {
@@ -134,7 +134,6 @@ int main() {
         }
     }
     
-    // Baca mechanic dan electrical (tidak digunakan dalam perhitungan)
     char dummy[10]; 
     scanf("%s", dummy); // mechanic
     scanf("%s", dummy); // electrical
@@ -143,7 +142,6 @@ int main() {
     int start_hour; 
     scanf("%d", &start_hour);
 
-    // Inisialisasi dist dengan INF
     for (int i = 0; i < MAX_NODES; ++i) {
         for (int j = 0; j < MAX_ENERGY; ++j) {
             for (int k = 0; k < 2; ++k) {
@@ -152,13 +150,13 @@ int main() {
         }
     }
     
-    // State awal
+
     int initial_parity = start_hour % 2; 
     dist[start_node][1000][initial_parity] = 0;
     parent_tracker[start_node][1000][initial_parity] = (Parent){-1, -1, -1};
     pq_push((State){0, start_node, 1000, initial_parity});
 
-    // Dijkstra
+
     while (pq_size > 0) {
         State current = pq_pop();
         long long cost = current.cost; 
@@ -168,7 +166,7 @@ int main() {
         
         if (cost > dist[u][energy][parity]) continue;
 
-        // Eksplorasi tetangga
+
         Edge* edge = adj[u];
         while(edge != NULL) {
             int v = edge->to;
@@ -189,7 +187,6 @@ int main() {
             edge = edge->next;
         }
 
-        // Rest point: bisa menunggu untuk ganti parity (ganjil/genap)
         if (is_rest_point[u]) {
             int new_parity = 1 - parity;
             if (cost < dist[u][energy][new_parity]) {
@@ -199,7 +196,6 @@ int main() {
             }
         }
         
-        // Charging station: isi ulang energi ke 1000
         if (is_charging_station[u] && energy < 1000) {
             if (cost < dist[u][1000][parity]) {
                 dist[u][1000][parity] = cost;
@@ -209,7 +205,6 @@ int main() {
         }
     }
 
-    // Cari solusi minimum di target
     long long min_total_energy = INF;
     int final_energy = -1, final_parity = -1;
     for (int e = 0; e < MAX_ENERGY; ++e) {
@@ -222,13 +217,11 @@ int main() {
         }
     }
 
-    // Output hasil
     if (min_total_energy == INF) {
         printf("Robot gagal dalam mencapai tujuan :(\n");
     } else {
         printf("Total energi minimum: %lld\n", min_total_energy);
         
-        // Rekonstruksi path
         Parent path[MAX_NODES * 2]; 
         int path_len = 0;
         int curr_u = target_node, curr_e = final_energy, curr_p = final_parity;
@@ -241,11 +234,9 @@ int main() {
             curr_p = p.parity;
         }
         
-        // Print jalur (tanpa duplikasi)
         printf("Jalur: ");
         int printed = 0;
         for (int i = path_len - 1; i >= 0; --i) {
-            // Skip jika node sama dengan sebelumnya (akibat rest/charging)
             if (i == path_len - 1 || path[i].u != path[i + 1].u) {
                 if (printed > 0) printf(" -> ");
                 printf("%s", node_names[path[i].u]);
@@ -254,11 +245,9 @@ int main() {
         }
         printf("\n");
         
-        // Print waktu tiba (tanpa duplikasi)
         printf("Waktu tiba:\n");
         int step_count = 0;
         for (int i = path_len - 1; i >= 0; --i) {
-            // Hanya print node yang berbeda (skip duplicate dari rest/charging)
             if (i == path_len - 1 || path[i].u != path[i + 1].u) { 
                 printf("%s (menit %d)\n", node_names[path[i].u], step_count * 2);
                 if (i > 0) step_count++;
@@ -268,3 +257,4 @@ int main() {
     
     return 0;
 }
+
